@@ -74,7 +74,7 @@ public class AutoShoot : MonoBehaviour
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.velocity = direction * 20f;
+            rb.linearVelocity = direction * 20f;
         }
     }
 }
