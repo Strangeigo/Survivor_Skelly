@@ -1,44 +1,95 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ActiveItem", menuName = "Scriptable Objects/ActiveItem")]
+public enum SpawnType
+{
+    FromFirePoint,
+    AroundPlayer,
+    RandomAboveEnemies,
+    OnPlayer
+}
+
+[CreateAssetMenu(menuName = "Items/Active Item")]
 public class ActiveItem : ItemData
 {
-    private float COOLDOWN;
-    [SerializeField] private Stats itemStats;
-    public Transform _Target;
-    private Dictionary<Stat, float> currentItemStats = new Dictionary<Stat, float>();
+    [Header("Active Settings")]
+    public GameObject projectilePrefab;
+    public SpawnType spawnType = SpawnType.FromFirePoint;
 
-    private Dictionary<Stat, float> stats = new Dictionary<Stat, float>();
+    public float baseCooldown = 2f;
+    public float baseDamage = 10f;
+    public float baseProjectileSpeed = 5f;
+    public int baseProjectileCount = 1;
+    public float spawnRadius = 5f;
+    public float meteorHeight = 10f;
 
-        private void InitializeStats()
+    private float cooldownTimer = 0f;
+
+    public override void OnPickup(StatsManager stats) { cooldownTimer = 0f; }
+
+    public override void OnUpgrade(StatsManager stats)
     {
-        stats[Stat.ATTACK] = itemStats.ATTACK;
-        stats[Stat.MOVEMENT_SPEED] = itemStats.MOVEMENT_SPEED;
-        stats[Stat.PROJECTILE_SPEED] = itemStats.PROJECTILE_SPEED;
-        stats[Stat.PROJECTILE_AMOUNT] = itemStats.PROJECTILE_AMOUNT;
-        stats[Stat.COOLDOWN] = itemStats.COOLDOWN;
-        stats[Stat.SIZE] = itemStats.SIZE;
-        stats[Stat.HP] = itemStats.HP;
-        stats[Stat.REGEN_HP] = itemStats.REGEN_HP;
-        stats[Stat.LIFESTEAL] = itemStats.LIFESTEAL;
-        stats[Stat.ARMOR] = itemStats.ARMOR;
-        stats[Stat.XP] = itemStats.XP;
+        level++;
+        baseDamage *= 1.2f;
+        baseProjectileSpeed *= 1.1f;
+        baseProjectileCount += 1;
     }
 
-    public float GetStat(Stat stat)
+    public void UpdateItem(StatsManager stats, Transform player, Transform firePoint)
     {
-        return stats.ContainsKey(stat) ? stats[stat] : 0f;
+        cooldownTimer -= Time.deltaTime;
+        float actualCooldown = baseCooldown / stats.GetStat(Stat.COOLDOWN);
+
+        if (cooldownTimer <= 0f)
+        {
+            Activate(stats, player, firePoint);
+            cooldownTimer = actualCooldown;
+        }
     }
 
-    public void ModifyStat(Stat stat, float amount)
+    private void Activate(StatsManager stats, Transform player, Transform firePoint)
     {
-        if (stats.ContainsKey(stat))
-            stats[stat] += amount;
+        int totalProjectiles = baseProjectileCount + (int)(stats.GetStat(Stat.PROJECTILE_AMOUNT) - 1);
+
+        for (int i = 0; i < totalProjectiles; i++)
+        {
+            Vector3 spawnPos = GetSpawnPosition(player, firePoint);
+            Quaternion rotation = GetSpawnRotation(player, firePoint, spawnPos);
+
+            // GameObject proj = Instantiate(projectilePrefab, spawnPos, rotation);
+            // if (proj.TryGetComponent(out ProjectileBase projectile))
+            // {
+            //     projectile.Init(stats, baseDamage * stats.GetStat(Stat.ATTACK), baseProjectileSpeed * stats.GetStat(Stat.PROJECTILE_SPEED));
+            // }
+        }
     }
 
-    public void SetStat(Stat stat, float value)
+    private Vector3 GetSpawnPosition(Transform player, Transform firePoint)
     {
-        stats[stat] = value;
+        switch (spawnType)
+        {
+            case SpawnType.FromFirePoint:
+                return firePoint.position;
+            case SpawnType.AroundPlayer:
+                Vector2 circle = Random.insideUnitCircle.normalized * spawnRadius;
+                return player.position + new Vector3(circle.x, 0, circle.y);
+            case SpawnType.RandomAboveEnemies:
+                // You could later replace this with actual enemy targeting
+                Vector2 randomPos = Random.insideUnitCircle * spawnRadius * 2f;
+                return new Vector3(player.position.x + randomPos.x, meteorHeight, player.position.z + randomPos.y);
+            case SpawnType.OnPlayer:
+                return player.position;
+            default:
+                return firePoint.position;
+        }
+    }
+
+    private Quaternion GetSpawnRotation(Transform player, Transform firePoint, Vector3 spawnPos)
+    {
+        if (spawnType == SpawnType.FromFirePoint)
+            return firePoint.rotation;
+        else if (spawnType == SpawnType.RandomAboveEnemies)
+            return Quaternion.LookRotation(Vector3.down); // meteors fall down
+        else
+            return Quaternion.identity;
     }
 }

@@ -745,7 +745,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed538da7ba7e7624391c5158b6ca41a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemManager
-  equippedItems: []
+  stats: {fileID: 0}
+  firePoint: {fileID: 0}
+  maxActiveSlots: 3
+  activeItems: []
+  passiveItems: []
 --- !u!114 &413550832
 MonoBehaviour:
   m_ObjectHideFlags: 0

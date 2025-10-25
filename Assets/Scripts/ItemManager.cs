@@ -1,36 +1,51 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 public class ItemManager : MonoBehaviour
 {
-    public List<ItemData> equippedItems = new List<ItemData>();
-    private Dictionary<ItemData, ItemEffect> activeItemsDict = new();
-    private Dictionary<ItemData, ItemEffect> passiveEffectsDict = new();
+    [SerializeField] private StatsManager stats;
+    [SerializeField] private Transform firePoint;
 
-    public void EquipItem(ItemData item)
+    [Header("Inventory")]
+    public int maxActiveSlots = 3;
+    public List<ActiveItem> activeItems = new();
+    public List<PassiveItem> passiveItems = new();
+
+    private void Update()
     {
-        if (!activeItemsDict.ContainsKey(item))
+        foreach (var active in activeItems)
         {
-            ItemEffect instance = Instantiate(item.effect); // make a unique instance
-            instance.OnEquip(gameObject);
-            activeItemsDict[item] = instance;
+            active.UpdateItem(stats, transform, firePoint);
         }
     }
 
-    public void UseItem(ItemData item)
+    public void PickupItem(ItemData item)
     {
-        if (activeItemsDict.TryGetValue(item, out ItemEffect effect))
+        if (item is ActiveItem active)
         {
-            effect.Trigger(gameObject);
+            ActiveItem existing = activeItems.Find(i => i.itemName == active.itemName);
+            if (existing != null)
+            {
+                existing.OnUpgrade(stats);
+            }
+            else if (activeItems.Count < maxActiveSlots)
+            {
+                activeItems.Add(active);
+                active.OnPickup(stats);
+            }
         }
-    }
-
-    public void UnequipItem(ItemData item)
-    {
-        if (activeItemsDict.TryGetValue(item, out ItemEffect effect))
+        else if (item is PassiveItem passive)
         {
-            effect.OnUnequip(gameObject);
-            activeItemsDict.Remove(item);
+            PassiveItem existing = passiveItems.Find(i => i.itemName == passive.itemName);
+            if (existing != null)
+            {
+                existing.OnUpgrade(stats);
+            }
+            else
+            {
+                passiveItems.Add(passive);
+                passive.OnPickup(stats);
+            }
         }
     }
 }
-

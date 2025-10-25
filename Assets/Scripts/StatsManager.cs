@@ -5,7 +5,7 @@ public class StatsManager : MonoBehaviour
 {
     [SerializeField] private Stats currentCharacter;
 
-    private Dictionary<Stat, float> characterStats = new Dictionary<Stat, float>();
+    public Dictionary<Stat, float> characterStats = new Dictionary<Stat, float>();
 
     public string CharacterName => currentCharacter.NAME;
 
