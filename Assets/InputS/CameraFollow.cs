@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private Transform target;
+    [SerializeField] public Transform target;
     [SerializeField] private Vector2 sensitivity = new Vector2(100f, 50f);
     [SerializeField] private Vector2 pitchLimits = new Vector2(-30f, 60f);
     [SerializeField] private float distance = 5f;

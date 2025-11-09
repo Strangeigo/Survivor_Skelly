@@ -9,18 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b904e931dfded8a4faef02259c775599, type: 3}
-  m_Name: Base_Character
-  m_EditorClassIdentifier: Assembly-CSharp::Character
-  NAME: BaseCharacter
+  m_Script: {fileID: 11500000, guid: bdbf4eb21fcfb8b42a8c8bae0d931884, type: 3}
+  m_Name: CharacterStats
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
+  NAME: 
   ATTACK: 1
-  MOVEMENT_SPEED: 0
-  PROJECTILE_SPEED: 0
-  PROJECTILE_AMOUNT: 0
-  COOLDOWN: 0
-  SIZE: 0
-  HP: 0
+  MOVEMENT_SPEED: 5
+  PROJECTILE_SPEED: 10
+  PROJECTILE_AMOUNT: 1
+  COOLDOWN: 1
+  SIZE: 1
+  HP: 100
   REGEN_HP: 0
   LIFESTEAL: 0
   ARMOR: 0
   XP: 0
+  CharacterPrefab: {fileID: 0}
