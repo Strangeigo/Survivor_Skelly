@@ -39,7 +39,7 @@ public class Health : MonoBehaviour
             GameManager gameManager = FindObjectOfType<GameManager>();
             if (gameManager != null)
             {
-                gameManager.GameOver();
+                // gameManager.GameOver();
             }
         }
         else
@@ -48,7 +48,7 @@ public class Health : MonoBehaviour
             GameManager gameManager = FindObjectOfType<GameManager>();
             if (gameManager != null)
             {
-                gameManager.EnemyKilled();
+                // gameManager.EnemyKilled();
             }
         }
         

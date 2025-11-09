@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class StatsManager : MonoBehaviour
 {
-    [SerializeField] private Stats currentCharacter;
+    public Stats currentCharacter;
 
     public Dictionary<Stat, float> characterStats = new Dictionary<Stat, float>();
 

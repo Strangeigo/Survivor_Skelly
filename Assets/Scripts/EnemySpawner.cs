@@ -21,18 +21,11 @@ public class EnemySpawner : MonoBehaviour
     private int currentWave = 0;
     private int enemiesSpawnedThisWave = 0;
     
-    void Start()
+    public void StartGame()
     {
-        // Find player
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-        {
-            player = playerObj.transform;
-        }
-        
-        nextWaveTime = Time.time + 2f; // Start first wave after 2 seconds
+        player = GameManager.Instance.CurrentPlayer.transform;
+         nextWaveTime = Time.time + 2f; // Start first wave after 2 seconds
     }
-    
     void Update()
     {
         if (player == null)
